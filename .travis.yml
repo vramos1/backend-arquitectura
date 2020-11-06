@@ -13,9 +13,9 @@ install:
 
 script:
   - echo "no tests!" #Tests go here
-  - sed -i -e 's/\r$/\n/' start.sh
-  - sed -i -e 's/\r$/\n/' stop.sh
-  - sed -i -e 's/\r$/\n/' install.sh #correct files endings
+  - sed -i -e 's/\r$/\n/' scripts/start.sh
+  - sed -i -e 's/\r$/\n/' scripts/stop.sh
+  - sed -i -e 's/\r$/\n/' scripts/install.sh #correct files endings
   - zip -r latest *
   - mkdir -p dpl_cd_upload
   - mv latest.zip dpl_cd_upload/latest.zip 
@@ -24,11 +24,11 @@ script:
 #Give everything to ECR
 after_success:
   - docker --version  # document the version travis is using
-  - pip install --user awscli # install aws cli w/o sudo
+  - sudo pip install awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  - eval $(aws ecr get-login --region sa-east-1 --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  - docker build -t $AWS_ECR_API:latest api
-  - docker tag $AWS_ECR_API:latest
+  - eval $(aws ecr get-login --region us-east-1 --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+  - docker build -t arqutectura .
+  - docker tag arquitectura:latest $AWS_ECR_API:latest
   - docker push $AWS_ECR_API:latest
   - docker images
 
@@ -39,7 +39,7 @@ deploy:
   local_dir: dpl_cd_upload #from where
   skip_cleanup: true #use cache (doesn't work...)
   bucket: "chat-django" #target bucket to use
-  region: sa-east-1 
+  region: us-east-1 
   upload-dir: latest
 - provider: codedeploy #Uploading to target group
   access_key_id: $AWS_ACCESS_KEY_ID
@@ -52,5 +52,5 @@ deploy:
   region: us-east-1
   wait_until_deployed: true #wise thing to do
   on:
-    branch: feat/ci-cd
+    branch: master
 

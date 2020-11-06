@@ -2,39 +2,27 @@ version: 0.0
 os: linux
 
 files:
-  - source: scripts
-    destination: /home/ec2-user/web/chat
+  - source: /scripts
+    destination: /home/ec2-user/chat
+    
 permissions:
   - object: scripts
     pattern: "**"
     owner: ec2-user
 hooks:
   ApplicationStop:
-    - location: stop.sh
+    - location: scripts/stop.sh
       timeout: 600
-      runas: ec2-user
+      runas: root
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 600
+      runas: root
   AfterInstall:
-    - location: install.sh
+    - location: scripts/install.sh
       timeout: 600
-      runas: ec2-user
+      runas: root
   ApplicationStart:
-    - location: start.sh
+    - location: scripts/start.sh
       timeout: 600
-      runas: ec2-user
-branch_config:
-  wip\/.*: ~
-
-  feat/ci-cd:
-      deploymentGroupName: Backend
-      deploymentGroupConfig:
-          serviceRoleArn: arn:aws:iam::1234567890:role/CodeDeployProductionRole
-      deploymentConfig:
-          autoRollbackConfiguration:
-              enabled: true
-
-  '.*':
-      deploymentGroupName: $BRANCH.staging.acme.tld
-      deploymentGroupConfig:
-          serviceRoleArn: arn:aws:iam::1234567890:role/CodeDeployStagingRole
-          ec2TagFilters:
-              - { Type: KEY_AND_VALUE, Key: hostname, Value: phobos.stage }
+      runas: root
