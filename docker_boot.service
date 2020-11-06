@@ -1,0 +1,12 @@
+[Unit]
+Description=docker boot
+After=git_pull.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/ec2-user/iic2173-proyecto-semestral-grupo07-backend
+ExecStart=/usr/bin/docker-compose -f /home/ec2-user/iic2173-proyecto-semestral-grupo07-backend/docker-compose.yml up -d --remove-orphans
+
+[Install]
+WantedBy=multi-user.target

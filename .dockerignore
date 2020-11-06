@@ -1,0 +1,8 @@
+# Ignore everything
+*
+# Include only app files
+
+!web_chat
+!requirements.txt
+!manage.py
+!entrypoint.sh

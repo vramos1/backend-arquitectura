@@ -1,0 +1,12 @@
+[Unit]
+Description=git
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/ec2-user/iic2173-proyecto-semestral-grupo07-backend
+ExecStart=/usr/bin/git pull
+
+[Install]
+WantedBy=multi-user.target

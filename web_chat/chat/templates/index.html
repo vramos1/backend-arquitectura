@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Rooms</h2>
+<p>Select a Room to enter</p>
+<div class="list-group">
+    {% for room in rooms %}
+    <a class="list-group-item" href="/{{ room.id }}">{{room.name}}</a>
+    {% endfor %}
+</div>
+
+<h3>Create new Room to chat</h3>
+<form class="form-inline" action="/create_room" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <button type="submit" class="btn btn-default">Create</button>
+</form>
+{% endblock content %}

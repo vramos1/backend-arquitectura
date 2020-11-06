@@ -1,0 +1,14 @@
+version: '3'
+services:
+  api:
+    container_name: foku-api
+    image: xxxxxxxxxxxxxx.dkr.ecr.sa-east-1.amazonaws.com/MYAPP:latest
+    restart: always
+    ports:
+      - "7777:7777"
+    command:
+      "npm run start"
+    env_file: 
+      - /home/ec2-user/secrets/.env
+    environment: 
+      - NODE_ENV=production

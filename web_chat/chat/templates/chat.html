@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Chat Messages {% if room is not None %} {{room.name}} {% endif %} </h2>
+{% if rooms %}
+<form class="row">
+    <h3>Select a room to enter</h3>
+    <select id='room' name='room' onchange="redirect(this)">
+        <option value=''>None</option>
+        {% for room_option in rooms %}
+        <option value="{{room_option.id}}" {% if room %} selected {% endif %}>
+            {{room_option.name}}</option>
+        {% endfor %}
+    </select>
+</form>
+{% endif %}
+<div class="chat-background" id='chat-view'>
+    {% for chat in chats %}
+    <div class="container">
+        <span class="time-left">{{chat.username}}</span>
+        <p>{{chat.message}}</p>
+        <span class="time-right">{{chat.created_at|date:'h:i:s A'}}</span>
+    </div>
+    {% endfor %}
+</div>
+<form class="message-container" action="/send" , method="POST">
+    {% csrf_token %}
+    <div class="column">
+        <input id="username" name='username' type="text" class="message-form" placeholder="Your username...">
+        <input id="message" name='message' type="text" class="message-form" placeholder="Your message...">
+    </div>
+    <input type="image" src="{% static 'image/enviar.png' %}" class="send-image">
+    <input type="hidden" name='room_id' id='room_id' value="{{room.id}}">
+</form>
+{% endblock content %}
