@@ -16,44 +16,44 @@ install:
 
 script:
   - python manage.py test #Tests go here
-  - sed -i -e 's/\r$/\n/' scripts/start.sh
-  - sed -i -e 's/\r$/\n/' scripts/stop.sh
-  - sed -i -e 's/\r$/\n/' scripts/install.sh #correct files endings
-  - zip -r latest *
-  - mkdir -p dpl_cd_upload
-  - mv latest.zip dpl_cd_upload/latest.zip 
+  # - sed -i -e 's/\r$/\n/' scripts/start.sh
+  # - sed -i -e 's/\r$/\n/' scripts/stop.sh
+  # - sed -i -e 's/\r$/\n/' scripts/install.sh #correct files endings
+  # - zip -r latest *
+  # - mkdir -p dpl_cd_upload
+  # - mv latest.zip dpl_cd_upload/latest.zip 
  
 #This script will upload the built containers to ECR to be deployed on a single EC2 instance with docker
 #Give everything to ECR
-after_success:
-  - docker --version  # document the version travis is using
-  - sudo pip install awscli # install aws cli w/o sudo
-  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  - eval $(aws ecr get-login --region us-east-1 --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  - docker build -t arqutectura .
-  - docker tag arquitectura:latest $AWS_ECR_API:latest
-  - docker push $AWS_ECR_API:latest
-  - docker images
+# after_success:
+#   - docker --version  # document the version travis is using
+#   - sudo pip install awscli # install aws cli w/o sudo
+#   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+#   - eval $(aws ecr get-login --region us-east-1 --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+#   - docker build -t arqutectura .
+#   - docker tag arquitectura:latest $AWS_ECR_API:latest
+#   - docker push $AWS_ECR_API:latest
+#   - docker images
 
-deploy:
-- provider: s3 #To upload the code to s3
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET_ACCESS_KEY
-  local_dir: dpl_cd_upload #from where
-  skip_cleanup: true #use cache (doesn't work...)
-  bucket: "chat-django" #target bucket to use
-  region: us-east-1 
-  upload-dir: latest
-- provider: codedeploy #Uploading to target group
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET_ACCESS_KEY
-  bucket: "chat-django" #target bucket to use, definaed before
-  key: latest/latest.zip #Source code, you can use any name but must be consistent
-  bundle_type: zip
-  application: Backend
-  deployment_group: Backend
-  region: us-east-1
-  wait_until_deployed: true #wise thing to do
-  on:
-    branch: master
+# deploy:
+# - provider: s3 #To upload the code to s3
+#   access_key_id: $AWS_ACCESS_KEY_ID
+#   secret_access_key: $AWS_SECRET_ACCESS_KEY
+#   local_dir: dpl_cd_upload #from where
+#   skip_cleanup: true #use cache (doesn't work...)
+#   bucket: "chat-django" #target bucket to use
+#   region: us-east-1 
+#   upload-dir: latest
+# - provider: codedeploy #Uploading to target group
+#   access_key_id: $AWS_ACCESS_KEY_ID
+#   secret_access_key: $AWS_SECRET_ACCESS_KEY
+#   bucket: "chat-django" #target bucket to use, definaed before
+#   key: latest/latest.zip #Source code, you can use any name but must be consistent
+#   bundle_type: zip
+#   application: Backend
+#   deployment_group: Backend
+#   region: us-east-1
+#   wait_until_deployed: true #wise thing to do
+#   on:
+#     branch: master
 
