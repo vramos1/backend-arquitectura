@@ -1,18 +1,21 @@
 #Deploy script for Foku-api
 
 language: python
+python:
+  - "3.8"
 
 services:
    - docker
+   - postgresql
 branches:
     only:
         - master
 
 install:
-  - echo "install nothing!" #Install goes here
+  - pip install -r requirements.txt #Install goes here
 
 script:
-  - echo "no tests!" #Tests go here
+  - python manage.py test #Tests go here
   - sed -i -e 's/\r$/\n/' scripts/start.sh
   - sed -i -e 's/\r$/\n/' scripts/stop.sh
   - sed -i -e 's/\r$/\n/' scripts/install.sh #correct files endings
