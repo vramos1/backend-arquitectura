@@ -49,10 +49,16 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
+        message_content = message.message
+        if message.status == "modified":
+            message_content = message.modified_message
+        elif message.status == "censored":
+            message_content = message.censored_message
+
         return {
             "id": str(message.id),
             "author": message.username,
-            "content": message.message,
+            "content": message_content,
             "created_at": str(message.created_at),
         }
 
