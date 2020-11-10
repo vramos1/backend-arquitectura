@@ -16,6 +16,9 @@ cryptography==3.1.1
 daphne==2.5.0
 Django==3.1
 djangorestframework==3.12.1
+djangorestframework-jwt
+django-cors-headers
+django-admin-list-filter-dropdown==1.0.3
 hiredis==1.1.0
 hyperlink==20.0.1
 idna==2.10
@@ -45,4 +48,3 @@ typed-ast==1.4.1
 typing-extensions==3.7.4.3
 wrapt==1.12.1
 zope.interface==5.1.2
-django-cors-headers
