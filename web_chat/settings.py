@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "web_chat.channels_app",
     "rest_framework",
     "channels",
+    "rest_framework.authtoken",
+    "social_django",  # python social auth
     "django_admin_listfilter_dropdown",
 ]
 
@@ -165,3 +167,35 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     "JWT_RESPONSE_PAYLOAD_HANDLER": "web_chat.utils.jwt_response_handler"
 }
+
+# OAUTH
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.google.GoogleOAuth2",
+    "django.contrib.auth.backends.ModelBackend",
+)
+
+for key in [
+    "GOOGLE_OAUTH2_KEY",
+    "GOOGLE_OAUTH2_SECRET",
+]:
+    exec("SOCIAL_AUTH_{key} = os.environ.get('{key}', '')".format(key=key))
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ["email", "profile"]
+
+# SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ["username"]
+
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+
+SOCIAL_AUTH_PIPELINE = (
+    "social_core.pipeline.social_auth.social_details",
+    "social_core.pipeline.social_auth.social_uid",
+    "social_core.pipeline.social_auth.auth_allowed",
+    "social_core.pipeline.social_auth.social_user",
+    "social_core.pipeline.user.get_username",
+    "social_core.pipeline.social_auth.associate_by_email",  # <- this line not included by default
+    "social_core.pipeline.user.create_user",
+    "social_core.pipeline.social_auth.associate_user",
+    "social_core.pipeline.social_auth.load_extra_data",
+    "social_core.pipeline.user.user_details",
+)

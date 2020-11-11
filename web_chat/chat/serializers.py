@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from web_chat.chat.models import Room
-
+from web_chat.chat.models import Room, Apply
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -39,12 +38,27 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     users = serializers.SerializerMethodField()
+    applys = serializers.SerializerMethodField()
 
     def get_users(self, obj):
         related_users = User.objects.filter(room=obj['id'])
         return [UserSerializer(user).data for user in related_users]
 
+    def get_applys(self, obj):
+        related_applys = Apply.objects.filter(room=obj['id'])
+        return [ApplySerializer(app).data for app in related_applys]
+
     class Meta:
         model = Room
-        fields =('id', 'name', 'private', 'users',)
+        fields =('id', 'name', 'private', 'users', 'applys')
         depth=1
+
+class ApplySerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        return UserSerializer(obj.user).data
+
+    class Meta:
+        model = Apply
+        fields = ('user', 'room', 'status')
