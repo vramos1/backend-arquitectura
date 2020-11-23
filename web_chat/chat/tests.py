@@ -28,6 +28,7 @@ class ChatTest(TestCase):
         creator_username = self.room.get_creator()
 
         self.assertEqual(creator_username, self.user.username)
+        self.assertEqual(creator_username, False)
 
     def test_get_all_messages(self):
 
